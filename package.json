@@ -38,6 +38,7 @@
     "autoprefixer": "^10.4.14",
     "babel-loader": "^9.1.2",
     "cookie-parser": "^1.4.6",
+    "eslint-plugin-react": "^7.32.2",
     "flowbite": "^1.6.5",
     "flowbite-react": "^0.4.4",
     "html-webpack-plugin": "^5.5.1",

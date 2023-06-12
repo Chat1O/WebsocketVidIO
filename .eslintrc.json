@@ -3,9 +3,13 @@
   "ignorePatterns": ["**/test", "**/__tests__"],
   "env": {
     "node": true,
-    "es2021": true
+    "es2021": true,
+    "browser":true
   },
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
   "parserOptions": { "sourceType": "module" },
   "rules": {
     "indent": ["warn", 2],
