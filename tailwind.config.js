@@ -2,9 +2,9 @@
 
 module.exports = {
   content: [
-    "./Client/**/*.{js,jsx,ts,tsx}", // all files with this extension are covered
-    "./node_modules/flowbite/**/*.js",
-    "./node_modules/flowbite-react/**/*.js",
+    './Client/**/*.{js,jsx,ts,tsx}', // all files with this extension are covered
+    './node_modules/flowbite/**/*.js',
+    './node_modules/flowbite-react/**/*.js',
   ],
   theme: {
     extend: {},

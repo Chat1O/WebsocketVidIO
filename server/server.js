@@ -1,1 +1,0 @@
-const socket = new WebSocket('wss://websocketvidio.com/websocketserver')
