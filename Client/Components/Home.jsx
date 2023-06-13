@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import socketIO from 'socket.io-client';
 const socket = socketIO.connect('http://localhost:8080');
-
+import Peer from 'peerjs';
 
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
   const videoRef = useRef(null);
-
+  const remoteVid = useRef(null);
+  const peer = new Peer();
 
   // on component mount,
   useEffect(() => {
@@ -17,8 +18,16 @@ export default function Home() {
           // attach the video stream
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            peer.on('open', (peerID) => {
+              const call = peer.call('video-chat-room', videoRef.current.srcObject);
+              call.on('stream', (remoteStream) => {
+                remoteVid.current.srcObject = remoteStream;
+              });
+            })
+            
           }
         })
+        
         .catch((err) => {
           console.log(err);
         })
@@ -44,7 +53,7 @@ export default function Home() {
       <div className="card w-2/3 h-2/3 shadow-xl border bg-base-100 flex flex-col justify-center items-center">
         <div className="flex justify-between">
           <video className="h-2/3" id="videoplayer" ref={videoRef} autoPlay/>
-          <video className="h-2/3" id="otherVideo" autoPlay/>
+          <video className="h-2/3" id="otherVideo" ref={remoteVid} autoPlay/>
         </div>
         <p className="max-w-lg text-2xl font-semibold leading-loose text-gray-900 dark:text-white justify-self-center" >Hello, Welcome to WebsocketVid.io</p>
         <button className="btn" onClick={connectButtonHit}>{connectbtn ? 'Connect' : 'Disconnect'}</button>

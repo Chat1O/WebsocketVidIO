@@ -3,18 +3,28 @@ const path = require('path');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const { Server } = require('socket.io');
-const io = new Server(server);
 const cors = require('cors');
+
 
 app.use(cors());
 
+const socketIO = require('socket.io')(http, {
+  cors: {
+    origin: "localhost:8080"
+  },
+  headers: 'application/json'
+  
+});
+socketIO.on('connection', (socket) => {
+  console.log(`: ${socket.id} user just connected!`);
+  socket.on('message', (data) => {
+    socketIO.emit('messageResponse', data);
+  });
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
 app.use('/', express.static(path.join(__dirname, '../build')));
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-});
 
-server.listen(3000, () => {
-  console.log('listening on PORT:3000');
-});
+server.listen(3000);
