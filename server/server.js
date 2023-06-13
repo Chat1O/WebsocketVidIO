@@ -3,15 +3,18 @@ const path = require('path');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const { Server } = require("socket.io");
+const { Server } = require('socket.io');
 const io = new Server(server);
+const cors = require('cors');
+
+app.use(cors());
 
 app.use('/', express.static(path.join(__dirname, '../build')));
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+  console.log('a user connected');
 });
 
 server.listen(3000, () => {
-    console.log('listening on PORT:3000');
+  console.log('listening on PORT:3000');
 });

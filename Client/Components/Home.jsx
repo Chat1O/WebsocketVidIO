@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import socketIO from 'socket.io-client';
+const socket = socketIO.connect('http://localhost:8080');
+
 
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
