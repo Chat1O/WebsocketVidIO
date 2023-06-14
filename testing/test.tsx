@@ -52,7 +52,8 @@ afterEach((done) => {
   done();
 });
 
-// tests
+
+
 describe('basic socket.io example', () => {
 
 
@@ -69,7 +70,7 @@ describe('basic socket.io example', () => {
   });
 
 
-// tests tha
+// checks if socket.io can communicate
   test('Should communicate with waiting for socket.io handshakes', (done) => {
     socket.emit('example', 'some messages');
     setTimeout(() => {

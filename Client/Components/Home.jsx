@@ -8,7 +8,6 @@ const socket = io('http://localhost:3000');
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
   const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
   const [activeUsers, setActiveUsers] = useState([]);
   const [test, setTest] = useState('');
 
