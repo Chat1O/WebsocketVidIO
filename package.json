@@ -7,7 +7,7 @@
     "test": "jest --verbose",
     "start": "NODE_ENV=production nodemon server/server.js",
     "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development webpack serve & node server/server.js"
+    "dev": "NODE_ENV=development webpack serve & nodemon server/server.js"
   },
   "nodemonConfig": {
     "ignore": [

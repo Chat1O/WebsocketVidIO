@@ -1,38 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+import User from './User';
+import UserList from './userList';
+
 
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const [peerConnection, setPeerConnection] = useState(null);
-  const socket = io('http://localhost:3000');
-    
-  // make connection to websocket and change the connect button
-  async function connectButtonHit() {
-    // change the button
-    connectbtn ? setconnectbtn(false) : setconnectbtn(true);    
-    
-    // set up socket 
-    socket.connect();
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [test, setTest] = useState('');
 
-    // set up rtcpeer connection
-    const peers = new RTCPeerConnection(null);
-    setPeerConnection(peers);
+  //const socket = io('http://localhost:3000');
 
-    peers.onaddstream = function (e) {
-      remoteVideoRef.current.srcObject = event.stream;
-    };
-
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    localVideoRef.current.srcObject = stream;
-    stream.getTracks().forEach(track => peers.addTrack(track, stream));
-
-    const offer = await peers.createOffer();
-    await peers.setLocalDescription(offer);
-    socket.emit('signal', offer);
+  function connectButtonHit() {
+    setconnectbtn(cur => !cur);
   }
 
+  function handleUserSelected(socketId) {
+    setTest(socketId);
+  }
 
   // on component mount, display local video
   useEffect(() => {
@@ -57,33 +44,27 @@ export default function Home() {
     }
   }, []);
 
+  // event listeners for socket.io
   useEffect(() => {
-    socket.on('signal', async message => {
-      console.log('here');
-      if (!peerConnection) return;
-      await peerConnection.setRemoteDescription(message);
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      socket.emit('signal', answer);
-    });
+    const socket = io('http://localhost:3000');
+    socket.on('update-user-list', ({ users }) => {
+      setActiveUsers(users);
+      console.log(activeUsers)
+    })
 
-    socket.on('ice', candidate => {
-      if (!peerConnection) return;
-      peerConnection.addIceCandidate(candidate);
-    });
+    socket.on('remove-user', ({ socketId }) => {
+      setActiveUsers(activeUsers.filter(cur => cur === socketId));
+    })
 
     return () => {
       socket.disconnect();
     }
-  }, [peerConnection]);
-
-  function sndmsg() {
-    socket.connect();
-    socket.emit('chat message', 'hello')
-  }
+  },[]);
 
   return (
     <div className="w-screen h-screen bg-blue-100 flex justify-center items-center">
+      <UserList users={activeUsers} handleUserSelected={handleUserSelected}/>
+      
       <div className="card w-2/3 h-2/3 shadow-xl border bg-base-100 flex flex-col justify-center items-center">
         <div className="flex justify-between">
           <video className="h-2/3" id="localVideo" ref={localVideoRef} autoPlay/>
@@ -92,7 +73,8 @@ export default function Home() {
         <p className="max-w-lg text-2xl font-semibold leading-loose text-gray-900 dark:text-white justify-self-center" >Hello, Welcome to WebsocketVid.io</p>
         <div className="flex">
           <button className="btn" onClick={connectButtonHit}>{connectbtn ? 'Connect' : 'Disconnect'}</button>
-          <button className="btn" onClick={sndmsg}>send message</button>
+          <button className="btn">send message</button>
+          <p>Selected: {test}</p>
         </div>
       </div>
     </div>

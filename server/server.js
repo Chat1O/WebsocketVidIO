@@ -11,30 +11,47 @@ const io = new Server(server, {
   }
 });
 
-let sockets = [];
+let activeSockets = [];
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  sockets.push(socket);
 
+
+  // check if socket exists
+  const existingSocket = activeSockets.find(
+    existingSocket => existingSocket === socket.id
+  );
+
+  // if it doesn't exist, push it to memory and emit data to connected users
+  if (!existingSocket) {
+    activeSockets.push(socket.id);
+    
+    socket.emit('update-user-list', {
+      users: activeSockets.filter(
+        existingSocket => existingSocket !== socket.id
+      )
+    });
+    
+
+    socket.broadcast.emit('update-user-list', {
+      users: [socket.id]
+    })
+  }
+
+  // if user disconnects, remove from list
   socket.on('disconnect', () => {
     console.log('user disconnected');
-    sockets = sockets.filter(s => s !== socket);
+    activeSockets = activeSockets.filter(
+      existingSocket => existingSocket !== socket.id
+    );
+    socket.broadcast.emit('remove-user', {
+      socketId: socket.id
+    })
   })
 
   socket.on('chat message', (msg) => {
     console.log('message: ' + msg);
     io.emit('message', msg);
-  })
-
-  socket.on('signal', (data) => {
-    console.log('signal received');
-    sockets.filters(s => s !== socket).forEach(s => s.emit('signal', data));
-  })
-
-  socket.on('ice', (data) => {
-    console.log('ice candidate received');
-    sockets.filter(s => s !== socket).forEach(s => s.emit('ice', data));
   })
 });
 
