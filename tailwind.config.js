@@ -12,8 +12,12 @@ module.exports = {
       'col1': '#e2f3f5',
       'col2': '#22d1ee',
       'col3': '#3d5af1',
-      'col4': '#0e153a'
-    }
+      'col4': '#0e153a',
+      'mLightPink': '#FCE9F1',
+      'mPink': '#F1D4E5',
+      'mBlue': '#73BBC9',
+      'mBlack': '#080202'
+    },
   },
   plugins: [
     require('flowbite/plugin'),
