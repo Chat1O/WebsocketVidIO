@@ -12,6 +12,11 @@ export default function Home() {
   const [curSelectedSocket, setcurSelectedSocket] = useState('');
   const socketRef = useRef(null);
   const [isAlreadyCalling, setIsAlreadyCalling] = useState(false);
+  const curSelectedSocketRef = useRef(curSelectedSocket);
+
+  useEffect(() => {
+    curSelectedSocketRef.current = curSelectedSocket;
+  }, [curSelectedSocket])
 
   function connectButtonHit() {
     setconnectbtn(cur => !cur);
@@ -20,36 +25,37 @@ export default function Home() {
   // this will call the user
   async function handleUserSelected(socketId) {
     setcurSelectedSocket(socketId);
+    // // is this correct?
+    // const offer = await peerConnection.createOffer();
+    // await peerConnection.setLocalDescription(new RTCSessionDescription(offer)).catch(err => console.log(err));
+    // console.log('created offer');
 
-    // is this correct?
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-
-    socketRef.current.emit('call-user', {
-      offer,
-      to: socketId
-    })
-    setIsAlreadyCalling(false);
+    // socketRef.current.emit('call-user', {
+    //   offer,
+    //   to: socketId
+    // })
+    // setIsAlreadyCalling(false);
   }
 
   // event listeners for socket.io
   useEffect(() => {
-    const { RTCPeerConnection, RTCSessionDescription } = window;
-    peerConnection = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: ['stun:stun1.l.google.com:19302']
-        },
-        
-      ]
-      ,iceCandidatePoolSize: 10,
-    });
+    // const { RTCPeerConnection, RTCSessionDescription } = window;
+    // let candidateQueue = [];
+    // peerConnection = new RTCPeerConnection({
+    //   iceServers: [
+    //     {
+    //       urls: ['stun:stun.l.google.com:19302']
+    //     },
+    //   ]
+    // });
+    // console.log('created peer');
 
-    peerConnection.ontrack = function({ streams: [stream] }) {
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = stream;
-      }
-    }
+    // peerConnection.ontrack = function({ streams: [stream] }) {
+    //   console.log('on track event');
+    //   if (remoteVideoRef.current && stream.getVideoTracks()) {
+    //     remoteVideoRef.current.srcObject = stream;
+    //   }
+    // }
 
     socketRef.current = io('http://localhost:3000');
     socketRef.current.on('update-user-list', ({ users }) => {
@@ -60,49 +66,71 @@ export default function Home() {
       setActiveUsers(prevUsers => prevUsers.filter(cur => cur !== socketId));
     })
 
-    // react to call made emitter
-    socketRef.current.on('call-made', async data => {
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(data.offer)
-      );
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+    // // react to call made emitter
+    // socketRef.current.on('call-made', async (data) => {
+    //   await peerConnection.setRemoteDescription(
+    //     new RTCSessionDescription(data.offer)
+    //   ).catch(err => console.log(err))
+    //   console.log('set remote description / received answer');
 
-      socketRef.current.emit('make-answer', {
-        answer,
-        to: data.socketId
-      })
-    })
+    //   // once remote description has been set, add all candidates from the queue
+    //   for (const candidate of candidateQueue) {
+    //     peerConnection.addIceCandidate(candidate).catch(err => console.log(err));
+    //   }
+    //   candidateQueue = [];
 
-    // answer made event
-    socketRef.current.on('answer-made', async data => {
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(data.answer)
-      );
+    //   const answer = await peerConnection.createAnswer();
+    //   await peerConnection.setLocalDescription(new RTCSessionDescription(answer)).catch(err => console.log(err));
+    //   console.log('created answer and set local description')
 
-      if (!isAlreadyCalling) {
-        handleUserSelected(data.socketId);
-        setIsAlreadyCalling(true);
-      }
-    })
+    //   socketRef.current.emit('make-answer', {
+    //     answer,
+    //     to: data.socketId
+    //   })
+    // })
 
-    // handle ice candidates
-    peerConnection.onicecandidate = function (event) {
-      if (event.candidate) {
-        socketRef.current.emit('new-ice-candidate', {
-          candidate: event.candidate,
-          to: curSelectedSocket
-        })
-      }
-    }
+    // // answer made event
+    // socketRef.current.on('answer-made', async data => {
+    //   if (data.socketId !== socketRef.current.id) {
+    //     await peerConnection.setRemoteDescription(
+    //       new RTCSessionDescription(data.answer)
+    //     ).catch(err => console.log(err));
+    //     console.log('set remote description with the received answer')
 
-    // handle ice candidate from remote peer
-    socketRef.current.on('new-ice-candidate', function(data) {
-      if (data.candidate) {
-        const rtcIceCandidate = new window.RTCIceCandidate(data.candidate);
-        peerConnection.addIceCandidate(rtcIceCandidate)
-      }
-    })
+    //     if (!isAlreadyCalling) {
+    //       handleUserSelected(data.socket);
+    //       setIsAlreadyCalling(true);
+    //     }
+    //   }
+    // })
+
+    // // handle ice candidates
+    // peerConnection.onicecandidate = function (event) {
+    //   if (event.candidate) {
+    //     console.log('created ice candidate')
+    //     socketRef.current.emit('new-ice-candidate', {
+    //       candidate: event.candidate,
+    //       to: curSelectedSocketRef.current
+    //     })
+    //   }
+    // }
+    
+    // // handle ice candidate from remote peer
+    // socketRef.current.on('new-ice-candidate', async function(data) {
+    //   if (data.candidate) {
+    //     console.log('got ice candidate');
+    //     const rtcIceCandidate = new window.RTCIceCandidate(data.candidate);
+    //     if (peerConnection.remoteDescription) {
+    //       while (candidateQueue.length) {
+    //         await peerConnection.addIceCandidate(candidateQueue.pop()).catch(err => console.log(err))
+    //         console.log('added ice candidate');
+    //       }
+    //     } 
+    //     else {
+    //       candidateQueue.push(rtcIceCandidate);
+    //     }
+    //   }
+    // })
 
     // set up video stream
     navigator.mediaDevices.getUserMedia({
@@ -135,7 +163,6 @@ export default function Home() {
   return (
     <div className="w-screen h-screen bg-blue-100 flex justify-center items-center">
       <UserList users={activeUsers} handleUserSelected={handleUserSelected}/>
-      
       <div className="card w-2/3 h-2/3 shadow-xl border bg-base-100 flex flex-col justify-center items-center">
         <div className="flex justify-between">
           <video className="h-2/3 w-full" id="localVideo" ref={localVideoRef} autoPlay/>
