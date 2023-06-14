@@ -49,9 +49,25 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('message', msg);
+  socket.on('call-user', data => {
+    socket.to(data.to).emit('call-made', {
+      offer: data.offer,
+      socket: socket.id
+    })
+  })
+
+  socket.on('make-answer', data => {
+    socket.to(data.to).emit('answer-made', {
+      socket: socket.id,
+      answer: data.answer
+    })
+  })
+
+  // handle ice candidate
+  socket.on('new-ice-candidate', data => {
+    socket.to(data.to).emit('new-ice-candidate', {
+      candidate: data.candidate
+    })
   })
 });
 
