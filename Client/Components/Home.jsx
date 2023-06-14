@@ -11,8 +11,6 @@ export default function Home() {
   const [curSelectedSocket, setcurSelectedSocket] = useState('');
   const socketRef = useRef(null);
   const curSelectedSocketRef = useRef(curSelectedSocket);
-  const [localStream, setLocalStream] = useState(null);
-  const peerRef = useRef(null);
 
 
 
@@ -33,7 +31,12 @@ export default function Home() {
     // socketRef.current.emit('call-user', {
     //   to: socketId,
     // });
-    
+    if (socketRef.current) {
+      socketRef.current.emit('send-message', {
+        to: socketId,
+        message: 'test'
+      });
+    }
   }
 
   // event listeners for socket.io
@@ -49,18 +52,12 @@ export default function Home() {
       setActiveUsers(prevUsers => prevUsers.filter(cur => cur !== socketId));
     })
 
+    socketRef.current.on('get-message', (data) => {
+      console.log('from socket: ', data.socket)
+      console.log('message ', data.message);
+    })
 
     
-    socketRef.current.on('call-made', async (data) => {
-      console.log('socketId: ', data.peer)
-      // set up connection
-      peerRef.current.on('connection', function(conn) {
-        console.log('testing')
-      })
-      console.log('connected')
-
-
-    })
 
     // set up video stream
     navigator.mediaDevices.getUserMedia({

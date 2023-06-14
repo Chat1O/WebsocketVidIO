@@ -56,16 +56,10 @@ io.on('connection', (socket) => {
       socketId: socket.id
     })
   })
-
-  socket.on('call-user', data => {
-    socket.to(data.to).emit('call-made', {
+  socket.on('send-message', data => {
+    socket.to(data.to).emit('get-message', {
       socket: socket.id,
-      peer: socket.id
-    })
-  })
-  socket.on('open-connection', data => {
-    socket.to(data.to).emit('connection-opened', {
-      socket: socket.id
+      message: data.message
     })
   })
 });
