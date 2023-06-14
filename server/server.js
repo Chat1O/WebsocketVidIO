@@ -4,12 +4,20 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+// const { ExpressPeerServer } = require('peer');
+
 const io = new Server(server, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST']
   }
 });
+
+// const peerServer = ExpressPeerServer(server, {
+//   debug: true,
+//   path: '/myapp'
+// })
+// app.use('/peerjs', peerServer)
 
 let activeSockets = [];
 
@@ -51,22 +59,13 @@ io.on('connection', (socket) => {
 
   socket.on('call-user', data => {
     socket.to(data.to).emit('call-made', {
-      offer: data.offer,
-      socket: socket.id
-    })
-  })
-
-  socket.on('make-answer', data => {
-    socket.to(data.to).emit('answer-made', {
       socket: socket.id,
-      answer: data.answer
+      peer: socket.id
     })
   })
-
-  // handle ice candidate
-  socket.on('new-ice-candidate', data => {
-    socket.to(data.to).emit('new-ice-candidate', {
-      candidate: data.candidate
+  socket.on('open-connection', data => {
+    socket.to(data.to).emit('connection-opened', {
+      socket: socket.id
     })
   })
 });
