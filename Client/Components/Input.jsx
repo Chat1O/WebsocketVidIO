@@ -18,7 +18,7 @@ export default function Input( { socketId, onSendMessage }) {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input type="text" className="w-full" onChange={onHandleChange} placeholder="type message" value={input}/>
+        <input type="text" className="w-full rounded-full" onChange={onHandleChange} placeholder="type message" value={input}/>
         <button type="submit" className="btn" >Send</button>
       </form>
     </div>

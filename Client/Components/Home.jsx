@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
-import UserList from './userList';
-// import Chatbox from './Chatbox';
-import Input from './Input';
-import Chat from './Chat';
+import React, { useState, useEffect, useRef } from "react";
+import io from "socket.io-client";
+import UserList from "./userList";
+import Input from "./Input";
+import Chat from "./Chat";
 
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
@@ -78,12 +77,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-blue-100 flex justify-center items-center">
+    <div className="bg-gradient-to-r from-indigo-500 from-10% via-mPink to-mBlue w-screen h-screen flex justify-center items-center">
       <UserList users={activeUsers} handleUserSelected={handleUserSelected} />
-      <div className="card w-2/3 h-2/3 shadow-xl border bg-white flex flex-col justify-center items-center">
-        <div className="flex justify-between">
+      <div className="card w-2/3 h-2/3 shadow-xl border bg-gray-700 shadow-white flex flex-col justify-center items-center">
+        <div className="flex justify-between align-middle">
           <video
-            className="h-2/3 w-full"
+            className="h-2/3 w-full align-middle"
             id="localVideo"
             ref={localVideoRef}
             autoPlay
@@ -96,7 +95,7 @@ export default function Home() {
             />
           </div>
         </div>
-        <p className="max-w-lg text-2xl font-semibold leading-loose text-gray-900 dark:text-white justify-self-center">
+        <p style={{fontFamily: 'Anton, sans-serif'}}className="max-w-lg text-2xl font-semibold leading-loose dark:text-white justify-self-center">
           Hello, Welcome to WebsocketVid.io
         </p>
         <div className="flex">
