@@ -19,14 +19,15 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^4.13.0",
-    "axios": "^1.4.0",
     "cors": "^2.8.5",
     "css-loader": "^6.8.1",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
+    "express-ws": "^5.0.2",
     "jest": "^29.5.0",
     "mini-css-extract-plugin": "^2.7.6",
     "nodemon": "^2.0.22",
+    "peerjs": "^1.4.7",
     "pg": "^8.10.0",
     "postcss-loader": "^7.3.3",
     "react": "^18.2.0",
@@ -34,8 +35,7 @@
     "react-router-dom": "^6.10.0",
     "socket.io": "^4.6.2",
     "socket.io-client": "^4.6.2",
-    "tailwind": "^4.0.0",
-    "websocket": "^1.0.34",
+    "url": "^0.11.1",
     "ws": "^8.13.0"
   },
   "devDependencies": {

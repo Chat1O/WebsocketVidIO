@@ -1,21 +1,32 @@
+/* eslint-disable quotes */
 const Socket = require('websocket').server;
 const express = require('express');
-const path = require('path');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const { Server } = require('socket.io');
-const io = new Server(server);
-const oaRouter = require('./oaRouter');
-const cookieParser = require('cookie-parser')
-const cors = require('cors');
+const { Server } = require("socket.io");
+const oaRouter = require('./oaRouter')
+// const { ExpressPeerServer } = require('peer');
 
-app.use(cors());
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
-app.use('/', express.static(path.join(__dirname, '../build')));
+// const peerServer = ExpressPeerServer(server, {
+//   debug: true,
+//   path: '/myapp'
+// })
+// app.use('/peerjs', peerServer)
+
+let activeSockets = [];
+
+//route all oAuth endpoints to oaRouter
+app.use('/login/oa', oaRouter);
 
 //parse requests
-app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
@@ -30,6 +41,45 @@ io.on('connection', (socket) => {
 //error handling
 app.use('*', (req, res) => {
   res.sendStatus(404)
+
+
+  // check if socket exists
+  const existingSocket = activeSockets.find(
+    existingSocket => existingSocket === socket.id
+  );
+
+  // if it doesn't exist, push it to memory and emit data to connected users
+  if (!existingSocket) {
+    activeSockets.push(socket.id);
+    
+    socket.emit('update-user-list', {
+      users: activeSockets.filter(
+        existingSocket => existingSocket !== socket.id
+      )
+    });
+    
+
+    socket.broadcast.emit('update-user-list', {
+      users: [socket.id]
+    })
+  }
+
+  // if user disconnects, remove from list
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+    activeSockets = activeSockets.filter(
+      existingSocket => existingSocket !== socket.id
+    );
+    socket.broadcast.emit('remove-user', {
+      socketId: socket.id
+    })
+  })
+  socket.on('send-message', data => {
+    socket.to(data.to).emit('get-message', {
+      socket: socket.id,
+      message: data.message
+    })
+  })
 });
 
 app.use((err, req, res, next) => {
@@ -43,5 +93,5 @@ app.use((err, req, res, next) => {
 })
 
 server.listen(3000, () => {
-  console.log('listening on PORT:3000');
+  console.log('listening on *:3000');
 });
