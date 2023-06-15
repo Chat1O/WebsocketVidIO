@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import UserList from './userList';
-import { Peer } from 'peerjs';
+import Chatbox from './Chatbox';
+import Input from './Input';
+// import Chat from './Chat';
 
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
@@ -11,7 +13,9 @@ export default function Home() {
   const [curSelectedSocket, setcurSelectedSocket] = useState('');
   const socketRef = useRef(null);
   const curSelectedSocketRef = useRef(curSelectedSocket);
+  
 
+  const [messages, setMessages] = useState(null)
 
 
   useEffect(() => {
@@ -20,11 +24,11 @@ export default function Home() {
 
   function connectButtonHit() {
     setconnectbtn(cur => !cur);
+    console.log(socketRef.current)
   }
 
   // this will call the user
-  async function handleUserSelected(socketId) {
-    
+  function handleUserSelected(socketId, message) {    
     setcurSelectedSocket(socketId);
     // peerRef.current = new Peer(socketRef.current.socketId);
     // // const conn = peerRef.current.connect(socketId);
@@ -34,7 +38,7 @@ export default function Home() {
     if (socketRef.current) {
       socketRef.current.emit('send-message', {
         to: socketId,
-        message: 'test'
+        message: message
       });
     }
   }
@@ -52,9 +56,10 @@ export default function Home() {
       setActiveUsers(prevUsers => prevUsers.filter(cur => cur !== socketId));
     })
 
+    // add new chat components
     socketRef.current.on('get-message', (data) => {
-      console.log('from socket: ', data.socket)
-      console.log('message ', data.message);
+      // const newEle = <Chat socketId={data.socketId} message={data.messsage}/>
+      console.log('data: ', data)
     })
 
     // set up video stream
@@ -65,7 +70,6 @@ export default function Home() {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-        // stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
       })
       .catch((error) => {
         console.warn(error.message);
@@ -94,6 +98,11 @@ export default function Home() {
           <video className="h-2/3 w-full" id="remoteVideo"ref={remoteVideoRef} autoPlay/>
         </div>
         <p className="max-w-lg text-2xl font-semibold leading-loose text-gray-900 dark:text-white justify-self-center" >Hello, Welcome to WebsocketVid.io</p>
+        {/* <Chatbox chatdata={messages} socketId={socketRef.current?.id} onSendMessage={handleUserSelected}/> */}
+        <div> 
+          {messages}
+          <Input socketId={socketRef.current?.id}onSendMessage={handleUserSelected}/>
+        </div>
         <div className="flex">
           <button className="btn" onClick={connectButtonHit}>{connectbtn ? 'Connect' : 'Disconnect'}</button>
           <button className="btn">send message</button>
