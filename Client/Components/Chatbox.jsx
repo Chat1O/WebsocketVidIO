@@ -1,14 +1,12 @@
 import React from 'react';
-import Input from './Input';
-
+import Chat from './Chat'
 function Chatbox({ chatData, socketId, onSendMessage }) {
 
   
 
   return (
     <div>
-      {/* Meesage chat */}
-      {/* <Input /> */}
+      <Chat />
     </div>
   );
 }

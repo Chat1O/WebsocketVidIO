@@ -1,5 +1,4 @@
 /* eslint-disable quotes */
-/* eslint-disable quotes */
 const Socket = require('websocket').server;
 const express = require('express');
 const app = express();
@@ -40,7 +39,6 @@ io.on('connection', (socket) => {
       )
     });
     
-
     socket.broadcast.emit('update-user-list', {
       users: [socket.id]
     })
@@ -58,7 +56,7 @@ io.on('connection', (socket) => {
   })
   socket.on('send-message', data => {
     io.emit('get-message', {
-      socket: socket.id,
+      socket: data.socket,
       message: data.message
     })
   })
