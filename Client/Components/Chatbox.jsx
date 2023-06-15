@@ -1,14 +1,14 @@
-import React from 'react';
-import Chat from './Chat'
-function Chatbox({ chatData, socketId, onSendMessage }) {
+// import React from 'react';
+// import Chat from './Chat'
+// function Chatbox({ chatData, socketId, onSendMessage }) {
 
   
 
-  return (
-    <div>
-      <Chat />
-    </div>
-  );
-}
+//   return (
+//     <div>
+//       <Chat />
+//     </div>
+//   );
+// }
 
-export default Chatbox;
+// export default Chatbox;
