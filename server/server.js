@@ -8,6 +8,9 @@ const { Server } = require('socket.io');
 const io = new Server(server);
 const oaRouter = require('./oaRouter');
 const cookieParser = require('cookie-parser')
+const cors = require('cors');
+
+app.use(cors());
 
 app.use('/', express.static(path.join(__dirname, '../build')));
 
@@ -17,11 +20,10 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 //route all oAuth endpoints to oaRouter
-app.use('/login/oa', oaRouter, (req, res) => {
-  console.log('routing to Oauth')
-});
+app.use('/login/oa', oaRouter);
 
 io.on('connection', (socket) => {
+  console.log('a user connected');
   console.log('a user connected');
 });
 
