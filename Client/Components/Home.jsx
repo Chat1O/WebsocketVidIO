@@ -30,11 +30,6 @@ export default function Home() {
   // this will call the user
   function handleUserSelected(socketId, message) {    
     setcurSelectedSocket(socketId);
-    // peerRef.current = new Peer(socketRef.current.socketId);
-    // // const conn = peerRef.current.connect(socketId);
-    // socketRef.current.emit('call-user', {
-    //   to: socketId,
-    // });
     if (socketRef.current) {
       socketRef.current.emit('send-message', {
         to: socketId,
@@ -79,17 +74,8 @@ export default function Home() {
     // disconnect on unmount
     return () => {
       socketRef.current.disconnect();
-      socketRef.current.disconnect();
     }
   },[]);
-
-  useEffect(() => {
-    if (remoteVideoRef.current && remoteVideoRef.current.srcObject) {
-      console.log('remoteVideoRef is connected');
-    } else {
-      console.log('remoteVideoRef is not connected');
-    }
-  }, [remoteVideoRef.current?.srcObject]);
   useEffect(() => {
     if (remoteVideoRef.current && remoteVideoRef.current.srcObject) {
       console.log('remoteVideoRef is connected');
