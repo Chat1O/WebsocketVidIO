@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
   })
   socket.on('send-message', data => {
     io.emit('get-message', {
-      socket: socket.id,
+      socket: data.socket,
       message: data.message
     })
   })

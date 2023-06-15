@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect} from 'react'
+import Input from './Input'
 
 export default function Chat({socketId, message}) {
-
   return (
     <div>
       <div className="chat chat-start">
