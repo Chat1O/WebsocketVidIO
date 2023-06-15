@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import UserList from './userList';
-import { Peer } from 'peerjs';
+// import { Peer } from 'peerjs';
 
 export default function Home() {
   const [connectbtn, setconnectbtn] = useState(true);
@@ -97,7 +97,7 @@ export default function Home() {
         <div className="flex">
           <button className="btn" onClick={connectButtonHit}>{connectbtn ? 'Connect' : 'Disconnect'}</button>
           <button className="btn">send message</button>
-          <p>Selected: {curSelectedSocket}</p>
+          <p className="btn">Selected: {curSelectedSocket}</p>
         </div>
       </div>
     </div>
