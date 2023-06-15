@@ -57,8 +57,6 @@ export default function Home() {
       console.log('message ', data.message);
     })
 
-    
-
     // set up video stream
     navigator.mediaDevices.getUserMedia({
       video: true
