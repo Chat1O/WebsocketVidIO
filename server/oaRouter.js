@@ -18,7 +18,7 @@ oaRouter.use('/', (req, res) => {
 
 //after Github accepts client's oauth request, gets redirected back to our app with a temporary code parameter and state
 oaRouter.use('/redirect', oaController.checkState, oaController.accessToken, oaController.accessAPI, (req, res) => {
-  return res.status(200).redirect(`http://localhost:8080/home`)
+  return res.status(200).redirect('http://localhost:8080/home')
 });
 
 
