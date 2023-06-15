@@ -76,11 +76,20 @@ export default function Home() {
       })
 
     // disconnect on unmount
+    // disconnect on unmount
     return () => {
+      socketRef.current.disconnect();
       socketRef.current.disconnect();
     }
   },[]);
 
+  useEffect(() => {
+    if (remoteVideoRef.current && remoteVideoRef.current.srcObject) {
+      console.log('remoteVideoRef is connected');
+    } else {
+      console.log('remoteVideoRef is not connected');
+    }
+  }, [remoteVideoRef.current?.srcObject]);
   useEffect(() => {
     if (remoteVideoRef.current && remoteVideoRef.current.srcObject) {
       console.log('remoteVideoRef is connected');
